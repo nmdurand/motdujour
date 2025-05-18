@@ -1,65 +1,35 @@
-import { getWordDetailedResult, isWordValid, LetterResult } from "@/utils";
-import { useEffect, useMemo, useState } from "react";
+import { useGameContext } from "@/contexts/gameContext";
+import { getWordDetailedResult, LetterResult } from "@/utils";
+import { useMemo } from "react";
 
-const MAX_LENGTH = 6;
+const WORD_LENGTH = 6;
 
 interface LineProps {
-  word: string;
-  isActive: boolean;
-  onNext: () => void;
-  onSuccess: () => void;
+  index: number;
 }
 
-export function Line({ word, isActive, onNext, onSuccess }: LineProps) {
-  const [guess, setGuess] = useState("");
-  const [isSubmitted, setIsSubmitted] = useState(false);
+export function Line({ index }: LineProps) {
+  const { guessedWords, currentGuessIndex, word } = useGameContext();
 
-  useEffect(() => {
-    const listener = (event: KeyboardEvent) => {
-      if (event.key.length === 1 && event.key.toLowerCase().match(/[a-z]/)) {
-        if (guess.length < MAX_LENGTH) {
-          setGuess(guess + event.key.toLowerCase());
-        }
-      } else if (event.key.toLowerCase() === "backspace") {
-        setGuess(guess.slice(0, -1));
-      } else if (
-        guess.length === MAX_LENGTH &&
-        event.key.toLowerCase() === "enter"
-      ) {
-        if (!isWordValid(guess)) {
-          console.log("Mot invalide", guess);
-          alert("Mot invalide");
-          return;
-        }
-        console.log("Mot valide", guess);
-        setIsSubmitted(true);
-        if (guess === word) {
-          onSuccess();
-        } else {
-          onNext();
-        }
-      }
-    };
-
-    if (isActive) {
-      window.addEventListener("keydown", listener);
-      return () => window.removeEventListener("keydown", listener);
-    }
-  }, [word, guess, isActive, onNext, onSuccess]);
+  const guess = guessedWords[index] || "";
+  const isCurrentGuess = index === currentGuessIndex;
 
   const result = useMemo(() => {
-    if (guess.length < MAX_LENGTH || !isSubmitted) {
+    if (isCurrentGuess || !word) {
       return [];
     }
     return getWordDetailedResult({ word, guess });
-  }, [word, guess, isSubmitted]);
+  }, [word, guess, isCurrentGuess]);
 
   return (
     <div className="flex gap-2">
-      {new Array(MAX_LENGTH).fill(0).map((_, index) => (
+      {new Array(WORD_LENGTH).fill(0).map((_, index) => (
         <Letter
           key={index}
-          letter={guess[index] || (index === 0 && isActive ? word[0] : "")}
+          letter={
+            guess[index] ||
+            (index === 0 && isCurrentGuess && word ? word[0] : "")
+          }
           status={result[index]}
         />
       ))}
