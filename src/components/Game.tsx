@@ -3,6 +3,7 @@
 import { GameContextProvider, useGameContext } from "@/contexts/gameContext";
 import { Board } from "./Board";
 import { NewGameButton } from "./NewGameButton";
+import { Keyboard } from "./Keyboard";
 
 export default function Game() {
   return (
@@ -30,6 +31,11 @@ function GameContent() {
   }
 
   if (gameState === "playing") {
-    return <Board />;
+    return (
+      <div className="flex flex-col items-center justify-center gap-4">
+        <Board />
+        <Keyboard />
+      </div>
+    );
   }
 }

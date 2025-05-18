@@ -2,7 +2,7 @@ import Game from "@/components/Game";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="w-full h-full absolute inset-0 flex flex-col items-center justify-center">
       <Game />
     </div>
   );

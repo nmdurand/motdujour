@@ -30,6 +30,9 @@ export function Line({ index }: LineProps) {
             guess[index] ||
             (index === 0 && isCurrentGuess && word ? word[0] : "")
           }
+          className={
+            index === 0 && isCurrentGuess && !guess[0] ? "bg-gray-500/50" : ""
+          }
           status={result[index]}
         />
       ))}
@@ -40,13 +43,15 @@ export function Line({ index }: LineProps) {
 interface LetterProps {
   letter: string;
   status: LetterResult;
+  className?: string;
 }
 
-function Letter({ letter, status }: LetterProps) {
+function Letter({ letter, status, className }: LetterProps) {
   return (
     <div
       className={`w-12 h-16 border border-gray-300
     rounded-md p-2 flex items-center justify-center
+    ${className}
     text-2xl font-bold ${
       status === "correct"
         ? "bg-green-500 text-white"
