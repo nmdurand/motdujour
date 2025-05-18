@@ -6,19 +6,27 @@ import { NewGameButton } from "./NewGameButton";
 
 export default function Game() {
   return (
-    <>
-      <GameContextProvider>
-        <GameContent />
-      </GameContextProvider>
-    </>
+    <GameContextProvider>
+      <GameContent />
+    </GameContextProvider>
   );
 }
 
 function GameContent() {
-  const { gameState } = useGameContext();
+  const { gameState, word } = useGameContext();
 
   if (gameState === "intro" || gameState === "won" || gameState === "lost") {
-    return <NewGameButton />;
+    return (
+      <>
+        <div className="text-center text-2xl font-bold mb-4">
+          {gameState === "intro" && "Trouvez le mot mystère en 6 tentatives"}
+          {gameState === "won" && "Bravo ! Le mot était " + word?.toUpperCase()}
+          {gameState === "lost" &&
+            "Perdu ! Le mot était " + word?.toUpperCase()}
+        </div>
+        <NewGameButton />
+      </>
+    );
   }
 
   if (gameState === "playing") {
