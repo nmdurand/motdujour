@@ -2,8 +2,8 @@ import { useGameContext } from "@/contexts/gameContext";
 
 const KEYS_LINES = [
   ["a", "z", "e", "r", "t", "y", "u", "i", "o", "p"],
-  ["a", "s", "d", "f", "g", "h", "j", "k", "l", "m"],
-  ["enter", "z", "x", "c", "v", "b", "n", "m", "backspace"],
+  ["q", "s", "d", "f", "g", "h", "j", "k", "l", "m"],
+  ["backspace", "w", "x", "c", "v", "b", "n", "enter"],
 ];
 
 export function Keyboard() {
@@ -43,9 +43,9 @@ function KeyboardLine({ line }: { line: string[] }) {
       {line.map((letter) => (
         <button
           key={letter}
-          className="w-8 h-10 bg-gray-500 rounded-md
+          className="w-8 h-10 grow bg-gray-500 rounded-md
           text-white text-2xl font-bold
-          hover:bg-gray-600 transition-colors cursor-pointer"
+          hover:bg-gray-600 active:bg-gray-700 transition-colors cursor-pointer"
           onClick={() => handleLetterClick(letter)}
         >
           {getDisplayedLetter(letter)}
