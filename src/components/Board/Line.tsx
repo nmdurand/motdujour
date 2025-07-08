@@ -9,10 +9,11 @@ interface LineProps {
 }
 
 export function Line({ index }: LineProps) {
-  const { guessedWords, currentGuessIndex, word } = useGameContext();
+  const { guessedWords, currentGuessIndex, word, currentGuess } =
+    useGameContext();
 
-  const guess = guessedWords[index] || "";
   const isCurrentGuess = index === currentGuessIndex;
+  const guess = isCurrentGuess ? currentGuess : guessedWords[index] || "";
 
   const result = useMemo(() => {
     if (isCurrentGuess || !word) {

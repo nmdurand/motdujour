@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useGameContext } from "../contexts/gameContext";
 
 export type LetterState = "correct" | "incorrect" | "present";
@@ -12,12 +12,7 @@ export function useKeyboardLetterState({
     undefined
   );
 
-  const { guessedWords, word, currentGuessIndex } = useGameContext();
-
-  const guessedWordsToCheck = useMemo(
-    () => guessedWords.slice(0, currentGuessIndex),
-    [guessedWords, currentGuessIndex]
-  );
+  const { guessedWords, word } = useGameContext();
 
   useEffect(() => {
     const computeLetterState = (letter: string): LetterState | undefined => {
@@ -32,8 +27,8 @@ export function useKeyboardLetterState({
             // for each index it appears at
             // check if it appears in the guessedWords at the same index
             // if it appears at the same index, return correct
-            for (let j = 0; j < guessedWordsToCheck.length; j++) {
-              if (guessedWordsToCheck[j][i] === letter) {
+            for (let j = 0; j < guessedWords.length; j++) {
+              if (guessedWords[j][i] === letter) {
                 return "correct";
               }
             }
@@ -41,8 +36,8 @@ export function useKeyboardLetterState({
         }
         // else check if it appears at all in the guessedWords
         // if it appears, return present
-        for (let j = 0; j < guessedWordsToCheck.length; j++) {
-          if (guessedWordsToCheck[j].includes(letter)) {
+        for (let j = 0; j < guessedWords.length; j++) {
+          if (guessedWords[j].includes(letter)) {
             return "present";
           }
         }
@@ -52,8 +47,8 @@ export function useKeyboardLetterState({
         // letter is not present in word to find
         // check if it appears in the guessedWords
         // if it appears, return incorrect
-        for (let j = 0; j < guessedWordsToCheck.length; j++) {
-          if (guessedWordsToCheck[j].includes(letter)) {
+        for (let j = 0; j < guessedWords.length; j++) {
+          if (guessedWords[j].includes(letter)) {
             return "incorrect";
           }
         }
@@ -62,7 +57,7 @@ export function useKeyboardLetterState({
     };
 
     setLetterState(() => computeLetterState(letter));
-  }, [letter, guessedWordsToCheck, word]);
+  }, [letter, guessedWords, word]);
 
   return letterState;
 }
