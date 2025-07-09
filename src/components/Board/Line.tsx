@@ -49,7 +49,7 @@ export function Line({ index }: LineProps) {
                 type: "spring",
                 stiffness: 300,
                 damping: 20,
-                delay: letterIndex * 0.1, // Stagger effect
+                delay: letterIndex * 0.2, // Stagger effect
               }}
               onAnimationComplete={() => {
                 if (letterIndex === WORD_LENGTH - 1) {
