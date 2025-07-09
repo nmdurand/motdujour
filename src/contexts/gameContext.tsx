@@ -23,6 +23,8 @@ interface GameContextType {
   onBackspace: () => void;
   onEnter: () => void;
   onNewGame: () => void;
+  animatingLine: number | null;
+  onLineAnimationComplete: (lineIndex: number) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -40,6 +42,7 @@ export function GameContextProvider({ children }: GameProviderProps) {
   const [guessedWords, setGuessedWords] = useState<string[]>(
     new Array(6).fill("")
   );
+  const [animatingLine, setAnimatingLine] = useState<number | null>(null);
 
   const onNextGuess = useCallback(() => {
     setCurrentGuessIndex((prev) => prev + 1);
@@ -53,11 +56,11 @@ export function GameContextProvider({ children }: GameProviderProps) {
 
   const onLetter = useCallback(
     (letter: string) => {
-      if (guessedWords[currentGuessIndex]?.length < 6) {
+      if (currentGuess.length < 6) {
         setCurrentGuess((prev) => prev + letter);
       }
     },
-    [guessedWords, currentGuessIndex]
+    [currentGuess]
   );
 
   const onBackspace = useCallback(() => {
@@ -72,22 +75,32 @@ export function GameContextProvider({ children }: GameProviderProps) {
         alert("Mot invalide");
         return;
       }
+
+      setGuessedWords((prev) => {
+        const newGuessedWords = [...prev];
+        newGuessedWords[currentGuessIndex] = currentGuess;
+        return newGuessedWords;
+      });
+
+      setAnimatingLine(currentGuessIndex);
+    }
+  }, [currentGuess, currentGuessIndex]);
+
+  const onLineAnimationComplete = useCallback(
+    (lineIndex: number) => {
+      setAnimatingLine(null);
+
+      // Now that animation is complete, update game state
       if (currentGuess === word) {
         onSuccess();
+      } else if (lineIndex >= 5) {
+        setGameState("lost");
       } else {
-        if (currentGuessIndex < 5) {
-          setGuessedWords((prev) => {
-            const newGuessedWords = [...prev];
-            newGuessedWords[currentGuessIndex] = currentGuess;
-            return newGuessedWords;
-          });
-          onNextGuess();
-        } else {
-          setGameState("lost");
-        }
+        onNextGuess();
       }
-    }
-  }, [currentGuess, word, onSuccess, onNextGuess, currentGuessIndex]);
+    },
+    [currentGuess, word, onSuccess, onNextGuess]
+  );
 
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
@@ -96,7 +109,7 @@ export function GameContextProvider({ children }: GameProviderProps) {
       } else if (event.key.toLowerCase() === "backspace") {
         onBackspace();
       } else if (
-        guessedWords[currentGuessIndex]?.length === 6 &&
+        currentGuess.length === 6 &&
         event.key.toLowerCase() === "enter"
       ) {
         onEnter();
@@ -111,7 +124,7 @@ export function GameContextProvider({ children }: GameProviderProps) {
     word,
     gameState,
     currentGuessIndex,
-    guessedWords,
+    currentGuess,
     onLetter,
     onBackspace,
     onEnter,
@@ -122,7 +135,9 @@ export function GameContextProvider({ children }: GameProviderProps) {
     setCurrentGuessIndex(0);
     setGameState("playing");
     setGuessedWords(new Array(6).fill(""));
+    setCurrentGuess("");
     setWord(newWord);
+    setAnimatingLine(null);
   }, []);
 
   const value = {
@@ -137,6 +152,8 @@ export function GameContextProvider({ children }: GameProviderProps) {
     onBackspace,
     onEnter,
     onNewGame,
+    animatingLine,
+    onLineAnimationComplete,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
