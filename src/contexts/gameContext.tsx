@@ -1,5 +1,6 @@
 import { getNewWord } from "@/app/actions";
 import { isWordValid } from "@/utils";
+import confetti from "canvas-confetti";
 import React, {
   createContext,
   useContext,
@@ -15,8 +16,6 @@ interface GameContextType {
   currentGuessIndex: number;
   guessedWords: string[];
   currentGuess: string;
-  onNextGuess: () => void;
-  onSuccess: () => void;
   gameState: GameState;
   word: string | null;
   onLetter: (letter: string) => void;
@@ -43,16 +42,6 @@ export function GameContextProvider({ children }: GameProviderProps) {
     new Array(6).fill("")
   );
   const [animatingLine, setAnimatingLine] = useState<number | null>(null);
-
-  const onNextGuess = useCallback(() => {
-    setCurrentGuessIndex((prev) => prev + 1);
-    setCurrentGuess("");
-  }, []);
-
-  const onSuccess = useCallback(() => {
-    setCurrentGuessIndex(-1);
-    setGameState("won");
-  }, []);
 
   const onLetter = useCallback(
     (letter: string) => {
@@ -92,14 +81,25 @@ export function GameContextProvider({ children }: GameProviderProps) {
 
       // Now that animation is complete, update game state
       if (currentGuess === word) {
-        onSuccess();
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+
+        setCurrentGuessIndex(-1);
+        setCurrentGuess("");
+        setTimeout(() => {
+          setGameState("won");
+        }, 3000);
       } else if (lineIndex >= 5) {
         setGameState("lost");
       } else {
-        onNextGuess();
+        setCurrentGuessIndex((prev) => prev + 1);
+        setCurrentGuess("");
       }
     },
-    [currentGuess, word, onSuccess, onNextGuess]
+    [currentGuess, word, setGameState]
   );
 
   useEffect(() => {
@@ -144,8 +144,6 @@ export function GameContextProvider({ children }: GameProviderProps) {
     currentGuessIndex,
     guessedWords,
     currentGuess,
-    onNextGuess,
-    onSuccess,
     gameState,
     word,
     onLetter,

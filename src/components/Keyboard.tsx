@@ -12,12 +12,17 @@ const KEYS_LINES = [
 ];
 
 export function Keyboard() {
+  const { word } = useGameContext();
+
   return (
-    <div className="flex flex-col gap-1">
-      {KEYS_LINES.map((line, index) => (
-        <KeyboardLine key={index} line={line} />
-      ))}
-    </div>
+    <>
+      {word}
+      <div className="flex flex-col gap-1">
+        {KEYS_LINES.map((line, index) => (
+          <KeyboardLine key={index} line={line} />
+        ))}
+      </div>
+    </>
   );
 }
 

@@ -19,9 +19,11 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/canvas-confetti": "^1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "canvas-confetti": "^1.9.3",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "motion": "^12.23.0",
