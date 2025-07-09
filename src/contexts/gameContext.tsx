@@ -81,6 +81,7 @@ export function GameContextProvider({ children }: GameProviderProps) {
 
       // Now that animation is complete, update game state
       if (currentGuess === word) {
+        // on success
         confetti({
           particleCount: 100,
           spread: 70,
@@ -93,8 +94,10 @@ export function GameContextProvider({ children }: GameProviderProps) {
           setGameState("won");
         }, 3000);
       } else if (lineIndex >= 5) {
+        // on game over
         setGameState("lost");
       } else {
+        // on next guess
         setCurrentGuessIndex((prev) => prev + 1);
         setCurrentGuess("");
       }
