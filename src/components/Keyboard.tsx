@@ -13,7 +13,7 @@ const KEYS_LINES = [
 
 export function Keyboard() {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       {KEYS_LINES.map((line, index) => (
         <KeyboardLine key={index} line={line} />
       ))}
@@ -38,7 +38,7 @@ function KeyboardLine({ line }: { line: string[] }) {
   };
 
   return (
-    <div className="flex justify-center gap-1">
+    <div className="flex justify-center gap-2">
       {line.map((letter) => (
         <KeyboardLetter
           key={letter}
